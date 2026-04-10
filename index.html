@@ -2,10 +2,19 @@
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>電力座標轉換 - SPA Pro</title>
-    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>電力座標轉換器</title>
+
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0d1117">
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="電力轉換">
+    <link rel="apple-touch-icon" href="icon-192.png">
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.15.0/proj4.js"></script>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -15,16 +24,16 @@
             <div class="icon-location">📍</div>
             <div>
                 <h2>電力座標轉換</h2>
-                <div class="subtitle">電力格網 (9/11碼) ➜ WGS84</div>
+                <div class="subtitle">TWD67 格網 ➜ WGS84</div>
             </div>
         </div>
-        <div class="icon-clock">🕒</div>
+        <div class="icon-clock" onclick="alert('離線功能已啟用')">🕒</div>
     </header>
 
     <main class="card">
-        <div class="section-title"><span>#</span> 輸入電力座標</div>
+        <div class="section-title"><span>#</span> 輸入電力座標 (9/11碼)</div>
         <div class="input-group">
-            <input id="tpc-input" type="text" placeholder="例：K1278EA38" maxlength="11">
+            <input id="tpc-input" type="text" placeholder="例：K1278EA3852" maxlength="11" spellcheck="false">
             <span class="char-counter" id="char-count">0/11</span>
         </div>
 
@@ -32,11 +41,11 @@
             <span>✈️</span> 立即轉換
         </button>
 
-        <div class="status-msg status-idle" id="status-text">IDLE.</div>
+        <div class="status-msg status-idle" id="status-text">系統就緒</div>
     </main>
 
     <section class="card result-card" id="result-area">
-        <h3 class="result-title">轉換結果 (WGS84)</h3>
+        <h3 class="result-title">轉換結果</h3>
         <div class="result-coords" id="coords-output">
             經度: --<br>緯度: --
         </div>
@@ -48,50 +57,26 @@
         <div class="examples-group">
             <button class="btn-example" data-code="K1278EA38">
                 <div class="example-icon">📍</div>
-                <div class="example-text">
-                    <span class="example-name">K 區彰化</span>
-                    <span class="example-code">K1278EA38</span>
-                </div>
+                <div class="example-text"><span class="example-name">彰化 (9碼)</span><span class="example-code">K1278EA38</span></div>
             </button>
-            <button class="btn-example" data-code="K4960HA33">
-                <div class="example-icon">📍</div>
-                <div class="example-text">
-                    <span class="example-name">K 區雲林</span>
-                    <span class="example-code">K4960HA33</span>
-                </div>
-            </button>
-            <button class="btn-example" data-code="E8057DB39">
-                <div class="example-icon">📍</div>
-                <div class="example-text">
-                    <span class="example-name">E 區宜蘭</span>
-                    <span class="example-code">E8057DB39</span>
-                </div>
-            </button>
-            <button class="btn-example" data-code="G4275GE16">
-                <div class="example-icon">📍</div>
-                <div class="example-text">
-                    <span class="example-name">G 區台中</span>
-                    <span class="example-code">G4275GE16</span>
-                </div>
+            <button class="btn-example" data-code="K1278EA3852">
+                <div class="example-icon">🎯</div>
+                <div class="example-text"><span class="example-name">高精度 (11碼)</span><span class="example-code">...3852</span></div>
             </button>
         </div>
     </section>
-
-    <footer class="card explainer-card">
-        <div class="section-title">📖 座標格式說明</div>
-        <div class="explainer-diagram">
-            <span class="color-z">Z</span><span class="color-yy">YY</span><span class="color-xx">XX</span><span class="color-ly">Ly</span><span class="color-lx">Lx</span><span class="color-fy">fy</span><span class="color-fx">fx</span><span class="color-f1">y1</span><span class="color-f1">x1</span>
-        </div>
-        <ul class="legend-list">
-            <li class="legend-item"><span class="legend-symbol color-z">Z</span> 主區代號 (A~Y)</li>
-            <li class="legend-item"><span class="legend-symbol color-yy">YY</span> 縱座標公里 / <span class="legend-symbol color-xx">XX</span> 橫座標公里</li>
-            <li class="legend-item"><span class="legend-symbol color-ly">Ly/Lx</span> 百公尺格 (A=0 ... J=9)</li>
-            <li class="legend-item"><span class="legend-symbol color-fy">fy/fx</span> 十公尺格 (0~9)</li>
-            <li class="legend-item"><span class="legend-symbol color-f1">y1/x1</span> 一公尺格 (僅 11 碼支援)</li>
-        </ul>
-    </footer>
 </div>
 
 <script src="script.js"></script>
+<script>
+    // 註冊 Service Worker (PWA 核心)
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js')
+                .then(reg => console.log('SW 註冊成功'))
+                .catch(err => console.log('SW 註冊失敗', err));
+        });
+    }
+</script>
 </body>
 </html>

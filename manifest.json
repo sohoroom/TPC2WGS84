@@ -1,0 +1,22 @@
+﻿{
+  "short_name": "電力轉換",
+  "name": "台電電力座標轉換器",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "./index.html",
+  "background_color": "#0d1117",
+  "display": "standalone",
+  "scope": "./",
+  "theme_color": "#007bff",
+  "description": "支援 9 碼與 11 碼電力座標轉換至 WGS84 經緯度"
+}
