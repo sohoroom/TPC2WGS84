@@ -129,6 +129,36 @@ inputEl.addEventListener("keypress", (e) => {
     if (e.key === "Enter") handleConvert(); 
 });
 
+// 在 script.js 最下方加入此更新邏輯
+const btnRefresh = document.getElementById('btn-refresh');
+
+if (btnRefresh) {
+    btnRefresh.addEventListener('click', async () => {
+        const confirmUpdate = confirm("是否要強制清除快取並重新載入？\n(這將更新網頁至最新版本)");
+        
+        if (confirmUpdate) {
+            // 1. 註銷所有 Service Workers
+            if ('serviceWorker' in navigator) {
+                const registrations = await navigator.serviceWorker.getRegistrations();
+                for (let registration of registrations) {
+                    await registration.unregister();
+                }
+            }
+
+            // 2. 刪除所有 Cache Storage
+            if ('caches' in window) {
+                const cacheNames = await caches.keys();
+                for (let cacheName of cacheNames) {
+                    await caches.delete(cacheName);
+                }
+            }
+
+            // 3. 強制重新整理 (忽略瀏覽器快取)
+            window.location.reload(true);
+        }
+    });
+}
+
 // 範例按鈕
 document.querySelectorAll(".btn-example").forEach(btn => {
     btn.addEventListener("click", function() {
